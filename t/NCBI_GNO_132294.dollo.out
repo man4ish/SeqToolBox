@@ -1,0 +1,63 @@
+
+Dollo and polymorphism parsimony algorithm, version 3.68
+
+Dollo parsimony method
+
+ 6 species,   1  characters
+
+
+Name         Characters
+----         ----------
+
+NM_103399    0
+GI_9099171   1
+NG_124294    0
+NG_128294    0
+NG_130294    0
+NG_132294    0
+
+
+User-defined tree:
+
+
+
+
+
+  +--------------NM_103399 
+--1  
+  !  +-----------GI_9099171
+  +--2  
+     !  +--------NG_124294 
+     +--3  
+        !  +-----NG_128294 
+        +--4  
+           !  +--NG_130294 
+           +--5  
+              +--NG_132294 
+
+
+requires a total of      0.000
+
+ reversions in each character:
+         0   1   2   3   4   5   6   7   8   9
+     *-----------------------------------------
+    0!       0                                
+
+From    To     Any Steps?    State at upper node
+                             ( . means same as in the node below it on tree)
+
+root      1         no     .
+  1    NM_103399    no     .
+  1       2         no     .
+  2    GI_9099171   yes    1
+  2       3         no     .
+  3    NG_124294    no     .
+  3       4         no     .
+  4    NG_128294    no     .
+  4       5         no     .
+  5    NG_130294    no     .
+  5    NG_132294    no     .
+
+
+
+
