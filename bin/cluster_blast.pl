@@ -28,7 +28,8 @@ my $database     = $opt{d} || die "Database is required option\n";
 my $blastoptions = $opt{b} || "";
 my $engine       = $opt{e} || "SGE";
 my $split        = $opt{s} || 1;
-my $NP			=$opt{p} || 1000;
+my $NP           = $opt{p} || 1000;
+
 #if ( $opt{e} eq "LSF" || $opt{e} eq "lsf" ) {
 #	$engine = "LSF";
 #}
@@ -38,7 +39,8 @@ my $NP			=$opt{p} || 1000;
 # Blast options
 
 #my $BLAST   = "rpsblast -d cdd -e 0.001 -F T";
-my $BLAST   = "blastall -p blastp -d $database ";
+my $BLAST = "blastall -p blastp -d $database ";
+
 #my $DB      = "-d $database";
 my $OPTIONS = "$blastoptions";
 
@@ -49,7 +51,7 @@ my $LSF;
 my $LSF_OPTIONS = "";
 if ( $engine eq "SGE" ) {
 	$LSF         = "qsub";
-	$LSF_OPTIONS = "-b y -j y -V -P 0380";
+	$LSF_OPTIONS = "-b y -j y -V -cwd ";
 } elsif ( $engine eq "LSF" ) {
 	$LSF         = 'bsub';
 	$LSF_OPTIONS = '-q "unified" -R "linux"';
@@ -73,9 +75,9 @@ my @excluded_machines;
 my $CURRENT_DIR = cwd();
 
 #my $CURRENT_DIR = $ENV{PWD};
-my $OUTPUT_DIR  = $CURRENT_DIR . '/output';
-my $LOG_DIR     = $CURRENT_DIR . '/log';
-my $TEMP_DIR    = $CURRENT_DIR . '/tmp';
+my $OUTPUT_DIR = $CURRENT_DIR . '/output';
+my $LOG_DIR    = $CURRENT_DIR . '/log';
+my $TEMP_DIR   = $CURRENT_DIR . '/tmp';
 
 if ( !stat($OUTPUT_DIR) ) {
 	system("mkdir $OUTPUT_DIR") == 0 or die "Can't create output dir!\n";
@@ -90,9 +92,9 @@ if ( !stat($TEMP_DIR) ) {
 	system("mkdir $TEMP_DIR") == 0 or die "Can't create log dir!\n";
 }
 
-my $total_seq    = 0;
-my $total_job    = 0;
-my $total_result = 0;
+my $total_seq          = 0;
+my $total_job          = 0;
+my $total_result       = 0;
 my $total_returned_job = 0;
 
 if ($composite_input) {
@@ -109,8 +111,9 @@ if ($composite_input) {
 			$total_seq++;
 
 			#			print STDERR $total_seq%$opt{s},"\n";
-			if ( $total_seq !=1 && !( ( $total_seq - 1 ) % $split)){
-#				print STDERR $line, "\n";
+			if ( $total_seq != 1 && !( ( $total_seq - 1 ) % $split ) ) {
+
+				#				print STDERR $line, "\n";
 				my $outfilename = $TEMP_DIR . '/' . $lastgi . '.lsf';
 				open( OUTFILE, ">$outfilename" )
 				  || die "Can't open $outfilename\n";
@@ -122,10 +125,10 @@ if ($composite_input) {
 
 			if ($lastgi) {
 
-			 #				$outfilename = $TEMP_DIR . '/' . $lastgi . '.lsf';
-			 #				open( OUTFILE, ">$outfile" ) || die "Can't open $outfile\n";
-			 #				print OUTFILE $lastseq;
-			 #				close(OUTFILE);
+			   #				$outfilename = $TEMP_DIR . '/' . $lastgi . '.lsf';
+			   #				open( OUTFILE, ">$outfile" ) || die "Can't open $outfile\n";
+			   #				print OUTFILE $lastseq;
+			   #				close(OUTFILE);
 
 				$lastseq .= $line;
 				$line =~ /^>(\S+)/;
@@ -181,9 +184,9 @@ while ( defined( $filename = readdir(DIR) ) ) {
 	#   if ($composite_input) {
 	#    }
 	next
-	  if ( $filename !~ /$ext$/ );  # skip if the file extension is not ".fas"
+	  if ( $filename !~ /$ext$/ );    # skip if the file extension is not ".fas"
 
-	if ( @jobs > $NP ) {            # Process limit has reached
+	if ( @jobs > $NP ) {              # Process limit has reached
 
 		gotosleep($NP);
 	}
@@ -215,7 +218,7 @@ if ($composite_input) {
 
 	#system ("rmfile.pl \"*.lsf\"");
 	#system("rm *.lsf");
-#	system("rm -rf $TEMP_DIR");
+	#	system("rm -rf $TEMP_DIR");
 	print STDERR "Total sequence: $total_seq\n";
 }
 
@@ -227,11 +230,12 @@ if ($composite_output) {
 
 		my $infile = $OUTPUT_DIR . '/' . $filename;
 		next if ( -d $infile );
-#		print STDERR $infile, "\n";
+
+		#		print STDERR $infile, "\n";
 		$total_returned_job++;
 		open( INFILE, "$infile" ) || die "Can't open $infile\n";
 		while ( my $line = <INFILE> ) {
-			if ($line =~ /^Query\=/) {
+			if ( $line =~ /^Query\=/ ) {
 				$total_result++;
 			}
 			print OUTFILE $line;
@@ -240,7 +244,8 @@ if ($composite_output) {
 	}
 	close(OUTFILE);
 	close(DIR);
-#	system("rm -rf $OUTPUT_DIR");
+
+	#	system("rm -rf $OUTPUT_DIR");
 
 	print STDERR "done.\n";
 	print STDERR "Total result: $total_result\n";
@@ -252,22 +257,22 @@ print STDERR "Total jobs: $total_job\n";
 
 sub gotosleep {
 	my $process_num = shift;
-	if ($process_num == 0) {
+	if ( $process_num == 0 ) {
 		print STDERR "Waiting for the jobs to finish...\n";
-	}else {
+	} else {
 		print STDERR "Process limit has reached...waiting\n";
 	}
 	while (1) {
-		
-#		if ( $process_num == 0 ) {
-#			
-#		} else {
-#
-#			print STDERR "Process limit has reached...waiting\n";
-#		}
+
+		#		if ( $process_num == 0 ) {
+		#
+		#		} else {
+		#
+		#			print STDERR "Process limit has reached...waiting\n";
+		#		}
 		my %status;
 		my %machine;
-		my $jobstat = "qstat -u ". $ENV{USER}.' |';
+		my $jobstat = "qstat -u " . $ENV{USER} . ' |';
 
 		if ( $engine eq "LSF" ) {
 			$jobstat = "bjobs -a |";
@@ -275,23 +280,30 @@ sub gotosleep {
 		open( PIPE, $jobstat );
 		while ( my $line = <PIPE> ) {
 			chomp $line;
+			$line=~ s/^\s+//;
+			$line =~ s/\s+$//;
 			if ( $line =~ /^JOBID/ || $line =~ /^job-ID/i || $line =~ /^-/ ) {
 				next;
 			}
 			my @fields = split( /\s+/, $line );
+			print STDERR join("-", @fields), "\n";
 			if ( $engine eq "LSF" ) {
 				$status{ $fields[0] } = $fields[2];
 				if ( $fields[5] =~ /(\S+)\.nc/ ) {
 					$machine{ $fields[0] } = $1;
 				}
 			} elsif ( $engine eq "SGE" ) {
-				if ($SGE_version > 5) {
-				$status{ $fields[1] } = $fields[5];
-				if ( $fields[8] =~ /\@(\S+)/ ) {
+#				if ( $SGE_version > 5 ) {
+#					$status{ $fields[1] } = $fields[5];
+#					if ( $fields[8] =~ /\@(\S+)/ ) {
+#						$machine{ $fields[1] } = $1;
+#					}
+#				} else {
+#					$status{ $fields[0] } = $fields[5];
+#				}
+				$status{ $fields[0] } = $fields[4];
+				if ( defined( $fields[8] ) && $fields[8] =~ /\@(\S+)/ ) {
 					$machine{ $fields[1] } = $1;
-				}}
-				else {
-					$status{$fields[0]} = $fields[5];
 				}
 			} else {
 
@@ -334,8 +346,7 @@ sub gotosleep {
 				{
 					system("bkill $pid");
 					if ( exists $machine{$pid} ) {
-						$excluded_machines[@excluded_machines]
-						  = $machine{$pid};
+						$excluded_machines[@excluded_machines] = $machine{$pid};
 					}
 					delete( $time{$pid} );
 					my $file = $pid_2_filename{$pid};
@@ -395,7 +406,7 @@ sub launch_job {
 
 	}
 	open( LSF,
-"$LSF $lsf_options -o $logfile $BLAST $OPTIONS -i $infile -o $outfile|"
+		 "$LSF $lsf_options -o $logfile $BLAST $OPTIONS -i $infile -o $outfile|"
 	);
 	$total_job++;
 	while ( my $line = <LSF> ) {
@@ -409,17 +420,17 @@ sub launch_job {
 				close LSF;
 				die "Can't schedule job\n";
 			}
-		}elsif ($engine eq "SGE") {
-			if ($line =~ /Your\s+job\s+(\d+)\s+/) {
-				$jobs[@jobs] = $1;
+		} elsif ( $engine eq "SGE" ) {
+			if ( $line =~ /Your\s+job\s+(\d+)\s+/ ) {
+				$jobs[@jobs]        = $1;
 				$pid_2_filename{$1} = $filename;
-				$time{$1} = time();
-			}else {
+				$time{$1}           = time();
+			} else {
 				close LSF;
 				die "Can't schedule job\n";
 			}
-		}else {
-			
+		} else {
+
 		}
 	}
 	print STDERR "done\n";
