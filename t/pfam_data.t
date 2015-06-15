@@ -19,11 +19,13 @@ my $obj = SeqToolBox::Pfam::Data->new($datafile);
 
 #print Dumper($obj);
 is( "ZZ", $obj->get_id_from_acc("PF00569.12"), "get_id_from_acc" );
-
+is( "ZZ", $obj->get_fuzzy_id_from_acc("PF00569"), "get_fuzzy_id_from_acc" );
 is( $obj->get_des_from_acc("PF00569.12"),
 	'Zinc finger, ZZ type',
 	"get_des_from_acc" );
-
+is( $obj->get_fuzzy_des_from_acc("PF00569"),
+	'Zinc finger, ZZ type',
+	"get_des_from_acc" );
 is( $obj->get_domain_type_from_acc("PF00569.12"),
 	"Domain", "get_domain_type_from_acc" );
 

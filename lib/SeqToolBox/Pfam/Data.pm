@@ -54,7 +54,7 @@ use Carp;
 ##------------------------------------------------------------------------##
 
 my %data;    # Holds parsed data
-
+my %fuzzy_data; # Holds accession without the dots.
 ##-------------------------------------------------------------------------##
 ## Constructors
 ##-------------------------------------------------------------------------##
@@ -104,6 +104,18 @@ sub get_id_from_acc {
 	return exists $data{$acc}->{ID} ? return $data{$acc}->{ID} : undef;
 }
 
+sub get_fuzzy_id_from_acc {
+	my ($self,$acc) = @_;
+	if ( my $return = $self->get_id_from_acc($acc)) {
+		return $return;
+	}elsif (exists $fuzzy_data{$acc}->{ID} ) {
+		return $fuzzy_data{$acc}->{ID};
+	}else {
+		return undef;
+	}
+}
+
+
 =head2 get_des_from_acc()
 
 Describe your function here
@@ -119,6 +131,29 @@ sub get_des_from_acc {
 	return exists $data{$acc}->{DE} ? return $data{$acc}->{DE} : undef;
 }
 
+=head2 get_fuzzy_des_from_acc()
+
+Describe your function here
+
+	Usage   :
+  	Args    :
+  	Returns : 
+  	
+=cut
+
+
+sub get_fuzzy_des_from_acc {
+	my ($self,$acc) = @_;
+	if ( my $return = $self->get_des_from_acc($acc)) {
+		return $return;
+	}elsif (exists $fuzzy_data{$acc}->{DE} ) {
+		return $fuzzy_data{$acc}->{DE};
+	}else {
+		return undef;
+	}
+}
+
+
 =head2 get_domain_type_from_acc()
 
 Describe your function here
@@ -133,6 +168,29 @@ sub get_domain_type_from_acc {
 	my ( $self, $acc ) = @_;
 	return exists $data{$acc}->{TP} ? return $data{$acc}->{TP} : undef;
 }
+
+=head2 get_fuzzy_domain_type_from_acc()
+
+Describe your function here
+
+	Usage   :
+  	Args    :
+  	Returns : 
+  	
+=cut
+
+
+sub get_fuzzy_domain_type_from_acc {
+	my ($self,$acc) = @_;
+	if ( my $return = $self->get_domain_type_from_acc($acc)) {
+		return $return;
+	}elsif (exists $fuzzy_data{$acc}->{TP} ) {
+		return $fuzzy_data{$acc}->{TP};
+	}else {
+		return undef;
+	}
+}
+
 
 =head2 get_clan_from_acc()
 
@@ -206,6 +264,15 @@ sub _parse_file {
 				foreach my $key ( keys %{$temp_data} ) {
 					next if $key eq "AC";
 					$data{ $temp_data->{AC} }->{"$key"} = $temp_data->{"$key"};
+					if ($temp_data->{AC} =~ /\./ ) {
+						my $base = $temp_data->{AC};
+						
+						$base =~ s/\.\S+$//;
+						#print STDERR $temp_data->{AC}, "\n";
+						#print STDERR $base, "\n";
+						$fuzzy_data{ $base }->{ "$key" } = $temp_data->{"$key"};
+					}
+					
 				}
 				$temp_data = undef;
 			} else {
