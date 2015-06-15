@@ -28,15 +28,25 @@ is( $obj->get_fuzzy_des_from_acc("PF00569"),
 	"get_des_from_acc" );
 is( $obj->get_domain_type_from_acc("PF00569.12"),
 	"Domain", "get_domain_type_from_acc" );
-
+is( $obj->get_fuzzy_domain_type_from_acc("PF00569.12"),
+	"Domain", "get_fuzzy_domain_type_from_acc" );
 is( "ZYG-11_interact", $obj->get_id_from_acc("PF05884.7"), "get_id_from_acc" );
+is( "ZYG-11_interact", $obj->get_fuzzy_id_from_acc("PF05884.7"), "get_fuzzy_id_from_acc" );
 
 is( $obj->get_des_from_acc("PF05884.7"),
 	'Interactor of ZYG-11',
 	"get_des_from_acc" );
+	
+
+is( $obj->get_fuzzy_des_from_acc("PF05884.7"),
+	'Interactor of ZYG-11',
+	"get_fuzzy_des_from_acc" );	
 is( $obj->get_domain_type_from_acc("PF05884.7"),
 	"Family", "get_domain_type_from_acc" );
-
+is( $obj->get_fuzzy_domain_type_from_acc("PF05884.7"),
+	"Family", "get_fuzzy_domain_type_from_acc" );
 is( $obj->get_clan_from_acc("PF09723.5"), "CL0167", "get_clan_from_acc" );
+is( $obj->get_fuzzy_clan_from_acc("PF09723.5"), "CL0167", "get_fuzzy_clan_from_acc" );
 
 is( $obj->get_clan_from_acc("PF00172.13"), undef, "get_clan_from_acc" );
+is( $obj->get_fuzzy_clan_from_acc("PF00172.13"), undef, "get_fuzzy_clan_from_acc" );

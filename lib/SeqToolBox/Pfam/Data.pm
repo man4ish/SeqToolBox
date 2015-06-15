@@ -207,6 +207,27 @@ sub get_clan_from_acc {
 	return exists $data{$acc}->{CL} ? return $data{$acc}->{CL} : undef;
 }
 
+=head2 get_fuzzy_clan_from_acc()
+
+Describe your function here
+
+	Usage   :
+  	Args    :
+  	Returns : 
+  	
+=cut
+
+
+sub get_fuzzy_clan_from_acc {
+	my ($self,$acc) = @_;
+	if ( my $return = $self->get_clan_from_acc($acc)) {
+		return $return;
+	}elsif (exists $fuzzy_data{$acc}->{CL} ) {
+		return $fuzzy_data{$acc}->{CL};
+	}else {
+		return undef;
+	}
+}
 
 =head2 get_length_from_acc()
 
@@ -223,6 +244,18 @@ sub get_length_from_acc {
 	my ($self,$acc) = @_;
 	return exists $data{$acc}->{ML} ? return $data{$acc}->{ML} : undef;
 }
+
+sub get_fuzzy_length_from_acc {
+	my ($self,$acc) = @_;
+	if ( my $return = $self->get_length_from_acc($acc)) {
+		return $return;
+	}elsif (exists $fuzzy_data{$acc}->{ML} ) {
+		return $fuzzy_data{$acc}->{ML};
+	}else {
+		return undef;
+	}
+}
+
 
 =head1 PRIVATE METHODS
 
