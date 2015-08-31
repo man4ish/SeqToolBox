@@ -53,8 +53,9 @@ use Carp;
 ## GLOBALS
 ##------------------------------------------------------------------------##
 
-my %data;    # Holds parsed data
-my %fuzzy_data; # Holds accession without the dots.
+my %data;          # Holds parsed data
+my %fuzzy_data;    # Holds accession without the dots.
+my %clan_data;
 ##-------------------------------------------------------------------------##
 ## Constructors
 ##-------------------------------------------------------------------------##
@@ -105,16 +106,15 @@ sub get_id_from_acc {
 }
 
 sub get_fuzzy_id_from_acc {
-	my ($self,$acc) = @_;
-	if ( my $return = $self->get_id_from_acc($acc)) {
+	my ( $self, $acc ) = @_;
+	if ( my $return = $self->get_id_from_acc($acc) ) {
 		return $return;
-	}elsif (exists $fuzzy_data{$acc}->{ID} ) {
+	} elsif ( exists $fuzzy_data{$acc}->{ID} ) {
 		return $fuzzy_data{$acc}->{ID};
-	}else {
+	} else {
 		return undef;
 	}
 }
-
 
 =head2 get_des_from_acc()
 
@@ -141,18 +141,16 @@ Describe your function here
   	
 =cut
 
-
 sub get_fuzzy_des_from_acc {
-	my ($self,$acc) = @_;
-	if ( my $return = $self->get_des_from_acc($acc)) {
+	my ( $self, $acc ) = @_;
+	if ( my $return = $self->get_des_from_acc($acc) ) {
 		return $return;
-	}elsif (exists $fuzzy_data{$acc}->{DE} ) {
+	} elsif ( exists $fuzzy_data{$acc}->{DE} ) {
 		return $fuzzy_data{$acc}->{DE};
-	}else {
+	} else {
 		return undef;
 	}
 }
-
 
 =head2 get_domain_type_from_acc()
 
@@ -179,18 +177,16 @@ Describe your function here
   	
 =cut
 
-
 sub get_fuzzy_domain_type_from_acc {
-	my ($self,$acc) = @_;
-	if ( my $return = $self->get_domain_type_from_acc($acc)) {
+	my ( $self, $acc ) = @_;
+	if ( my $return = $self->get_domain_type_from_acc($acc) ) {
 		return $return;
-	}elsif (exists $fuzzy_data{$acc}->{TP} ) {
+	} elsif ( exists $fuzzy_data{$acc}->{TP} ) {
 		return $fuzzy_data{$acc}->{TP};
-	}else {
+	} else {
 		return undef;
 	}
 }
-
 
 =head2 get_clan_from_acc()
 
@@ -217,14 +213,13 @@ Describe your function here
   	
 =cut
 
-
 sub get_fuzzy_clan_from_acc {
-	my ($self,$acc) = @_;
-	if ( my $return = $self->get_clan_from_acc($acc)) {
+	my ( $self, $acc ) = @_;
+	if ( my $return = $self->get_clan_from_acc($acc) ) {
 		return $return;
-	}elsif (exists $fuzzy_data{$acc}->{CL} ) {
+	} elsif ( exists $fuzzy_data{$acc}->{CL} ) {
 		return $fuzzy_data{$acc}->{CL};
-	}else {
+	} else {
 		return undef;
 	}
 }
@@ -239,23 +234,21 @@ Describe your function here
   	
 =cut
 
-
 sub get_length_from_acc {
-	my ($self,$acc) = @_;
+	my ( $self, $acc ) = @_;
 	return exists $data{$acc}->{ML} ? return $data{$acc}->{ML} : undef;
 }
 
 sub get_fuzzy_length_from_acc {
-	my ($self,$acc) = @_;
-	if ( my $return = $self->get_length_from_acc($acc)) {
+	my ( $self, $acc ) = @_;
+	if ( my $return = $self->get_length_from_acc($acc) ) {
 		return $return;
-	}elsif (exists $fuzzy_data{$acc}->{ML} ) {
+	} elsif ( exists $fuzzy_data{$acc}->{ML} ) {
 		return $fuzzy_data{$acc}->{ML};
-	}else {
+	} else {
 		return undef;
 	}
 }
-
 
 =head1 PRIVATE METHODS
 
@@ -297,13 +290,14 @@ sub _parse_file {
 				foreach my $key ( keys %{$temp_data} ) {
 					next if $key eq "AC";
 					$data{ $temp_data->{AC} }->{"$key"} = $temp_data->{"$key"};
-					if ($temp_data->{AC} =~ /\./ ) {
+					if ( $temp_data->{AC} =~ /\./ ) {
 						my $base = $temp_data->{AC};
-						
+
 						$base =~ s/\.\S+$//;
+
 						#print STDERR $temp_data->{AC}, "\n";
 						#print STDERR $base, "\n";
-						$fuzzy_data{ $base }->{ "$key" } = $temp_data->{"$key"};
+						$fuzzy_data{$base}->{"$key"} = $temp_data->{"$key"};
 					}
 					
 				}
