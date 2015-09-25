@@ -391,13 +391,15 @@ sub get_subseq {
 		croak "Invalid coordinates for sequence extraction\n";
 	}
 	my $seq = $self->get_cleaned_seq;
-	my @array = split( //, $seq );
-	if ( $start == $end ) {
-		return $array[ $start - 1 ];
-	} else {
-		my @s = @array[ ( $start - 1 ) .. ( $end - 1 ) ];
-		return join( "", @s );
-	}
+	return substr ($seq, $start-1, (($end - $start) + 1));
+	#my @array = split( //, $seq );
+#	if ( $start == $end ) {
+#		return substr ($start - 1, )
+#		return $array[ $start - 1 ];
+#	} else {
+#		my @s = @array[ ( $start - 1 ) .. ( $end - 1 ) ];
+#		return join( "", @s );
+#	}
 }
 
 sub get_gi {
