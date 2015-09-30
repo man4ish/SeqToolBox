@@ -54,19 +54,20 @@ sub new {
 
 sub _init {
 	my ( $self, @args ) = @_;
-	my ( $id, $des, $seq )
-	  = $self->_rearrange( [ "ID", "DES", "SEQ" ], @args );
+	my ( $id, $des, $seq ) =
+	  $self->_rearrange( [ "ID", "DES", "SEQ" ], @args );
 
 	#print STDERR "DEBUG:$des\n";
 	$self->{id}  = $id  || "";
 	$self->{des} = $des || "";
 	$self->{seq} = $seq || "";
+
 }
 
 #sub _parse_file {
 #    my $self = shift;
 #    my $file = shift;
-#    open (FILE, $file) || croak "Can't open $file\n";
+#    open (FILE, $file) || croak " Can't open $file \n ";
 #    my %seq;
 #    my $id = undef;
 #    my $s = "";
@@ -146,7 +147,7 @@ sub get_seq {
 
 Sets the sequence string
 
-	Usage   : $seq = $seq->set_seq("ATGC")
+	Usage   : $seq = $seq->set_seq(" ATGC ")
   	Args    : The sequence string
   	Returns : None
   	
@@ -208,7 +209,7 @@ sub length {
 	my ( $self, @args ) = @_;
 
 	#if ($self->{length}) {return $self->{length};}
-	croak "ERROR: Length of an undefined sequence can't be calculated!"
+	croak " ERROR : Length of an undefined sequence can't be calculated !"
 	  unless $self->{seq};
 	return length( $self->{seq} );
 }
@@ -334,10 +335,10 @@ sub get_pretty_seq {
 			$s .= $s[ $i - 1 ];
 		} else {
 			$s .= $s[ $i - 1 ];
-			$s .= "\n";
+			$s .= " \n ";
 		}
 	}
-	$s .= "\n";
+	$s .= " \n ";
 	return $s;
 }
 
@@ -353,18 +354,18 @@ Describe your function here
 
 sub get_fasta {
 	my ( $self, @args ) = @_;
-	my $s = ">" . $self->get_id() . " " . $self->get_desc() . "\n";
+	my $s = " > " . $self->get_id() . " " . $self->get_desc() . " \n ";
 	$s .= $self->get_pretty_seq();
 	return $s;
 }
 
 sub get_aln_subseq {
 	my ( $self, @args ) = @_;
-	my ( $start, $end ) = $self->_rearrange( [ "START", "END" ], @args );
-	if ( !$start || !$end ) { croak "Start and end is mandetory option\n"; }
-	if ( $end < $start ) { croak "Start cannot be more that end\n"; }
+	my ( $start, $end ) = $self->_rearrange( [ " START ", " END " ], @args );
+	if ( !$start || !$end ) { croak " Start and end is mandetory option \n "; }
+	if ( $end < $start ) { croak " Start cannot be more that end \n "; }
 	if ( $start < 1 || $end > $self->length ) {
-		croak "Invalid coordinates for sequence extraction\n";
+		croak " Invalid coordinates for sequence extraction \n ";
 	}
 	my $seq   = $self->get_seq;
 	my @array = split( //, $seq );
@@ -385,21 +386,22 @@ Describe your function here
 sub get_subseq {
 	my ( $self, @args ) = @_;
 	my ( $start, $end ) = $self->_rearrange( [ "START", "END" ], @args );
-	if ( !$start || !$end ) { croak "Start and end is mandetory option\n"; }
-	if ( $end < $start ) { croak "Start cannot be more that end\n"; }
+	if ( !$start || !$end ) { croak " Start and end is mandetory option \n "; }
+	if ( $end < $start ) { croak " Start cannot be more that end \n "; }
 	if ( $start < 1 || $end > $self->length ) {
-		croak "Invalid coordinates for sequence extraction\n";
+		croak " Invalid coordinates for sequence extraction \n ";
 	}
 	my $seq = $self->get_cleaned_seq;
-	return substr ($seq, $start-1, (($end - $start) + 1));
+	return substr( $seq, $start - 1, ( ( $end - $start ) + 1 ) );
+
 	#my @array = split( //, $seq );
-#	if ( $start == $end ) {
-#		return substr ($start - 1, )
-#		return $array[ $start - 1 ];
-#	} else {
-#		my @s = @array[ ( $start - 1 ) .. ( $end - 1 ) ];
-#		return join( "", @s );
-#	}
+	#	if ( $start == $end ) {
+	#		return substr ($start - 1, )
+	#		return $array[ $start - 1 ];
+	#	} else {
+	#		my @s = @array[ ( $start - 1 ) .. ( $end - 1 ) ];
+	#		return join( "", @s );
+	#	}
 }
 
 sub get_gi {
@@ -416,7 +418,7 @@ sub revcom {
 	my $self = shift;
 	my $seq  = $self->get_cleaned_seq();
 	if ( $seq =~ /[^ATGCNatgcn]/ ) {
-		croak "Only a DNA sequence can be reversed and complemented\n";
+		croak " Only a DNA sequence can be reversed and complemented \n ";
 	}
 	my @char          = split //, $seq;
 	my $reversed      = reverse(@char);
@@ -427,7 +429,6 @@ sub revcom {
 			$r_seq .= "T";
 		} elsif ( $i eq "T" || $i eq "t" ) {
 			$r_seq .= "A";
-
 		} elsif ( $i eq "G" || $i eq "g" ) {
 			$r_seq .= "C";
 		} elsif ( $i eq "C" || $i eq "c" ) {
@@ -435,7 +436,7 @@ sub revcom {
 		} elsif ( $i eq "N" || $i eq "n" ) {
 			$r_seq .= "N";
 		} else {
-			croak "Only A,T,G,C,N are allowed in a DNA sequence\n";
+			croak " Only A, T, G, C, N are allowed in a DNA sequence \n ";
 		}
 	}
 
@@ -450,17 +451,101 @@ sub mark_position {
 	my @s      = split( //, $seq );
 	my $return = "";
 	for ( my $i = 0 ; $i < @s ; $i++ ) {
-		if ( exists $required->{ $i} ) {
-				$return .= $required->{$i};
-			}
-	
-			$return .= $s[$i];
-	
+		if ( exists $required->{$i} ) {
+			$return .= $required->{$i};
 		}
-		my $newseq
-		  = SeqToolBox::Seq->new( -id => $self->get_id(), -seq => $return );
-		return $newseq;
 
+		$return .= $s[$i];
+
+	}
+	my $newseq =
+	  SeqToolBox::Seq->new( -id => $self->get_id(), -seq => $return );
+	return $newseq;
+
+}
+
+=head2 translate()
+
+Describe your function here
+
+	Usage   :
+  	Args    :
+  	Returns : 
+  	
+=cut
+
+sub translate {
+	my ( $self, @args ) = @_;
+	my %aacode = (
+				   TTT => "F",
+				   TTC => "F",
+				   TTA => "L",
+				   TTG => "L",
+				   TCT => "S",
+				   TCC => "S",
+				   TCA => "S",
+				   TCG => "S",
+				   TAT => "Y",
+				   TAC => "Y",
+				   TAA => "*",
+				   TAG => "*",
+				   TGT => "C",
+				   TGC => "C",
+				   TGA => "*",
+				   TGG => "W",
+				   CTT => "L",
+				   CTC => "L",
+				   CTA => "L",
+				   CTG => "L",
+				   CCT => "P",
+				   CCC => "P",
+				   CCA => "P",
+				   CCG => "P",
+				   CAT => "H",
+				   CAC => "H",
+				   CAA => "Q",
+				   CAG => "Q",
+				   CGT => "R",
+				   CGC => "R",
+				   CGA => "R",
+				   CGG => "R",
+				   ATT => "I",
+				   ATC => "I",
+				   ATA => "I",
+				   ATG => "M",
+				   ACT => "T",
+				   ACC => "T",
+				   ACA => "T",
+				   ACG => "T",
+				   AAT => "N",
+				   AAC => "N",
+				   AAA => "K",
+				   AAG => "K",
+				   AGT => "S",
+				   AGC => "S",
+				   AGA => "R",
+				   AGG => "R",
+				   GTT => "V",
+				   GTC => "V",
+				   GTA => "V",
+				   GTG => "V",
+				   GCT => "A",
+				   GCC => "A",
+				   GCA => "A",
+				   GCG => "A",
+				   GAT => "D",
+				   GAC => "D",
+				   GAA => "E",
+				   GAG => "E",
+				   GGT => "G",
+				   GGC => "G",
+				   GGA => "G",
+				   GGG => "G",
+	);    # this is the hash table for the amino acids
+	my $seq        = uc( $self->get_seq );
+	my @codons     = unpack '(A3)*', $seq;
+	my @aminoAcids = map { exists $aacode{$_} ? $aacode{$_} : "X" } @codons;
+	return join '', @aminoAcids;
 }
 
 =head1 SEE ALSO

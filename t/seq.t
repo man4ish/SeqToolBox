@@ -23,3 +23,5 @@ my %pos = (2 => "|", 3=>"|");
 my $marked_seq = $seq->mark_position(\%pos);
 #my $marked_seq1 = $seq->mark_position([2,3],"|");
 is ($marked_seq->get_seq(), "AG|T|C");
+$seq->set_seq("TTTTCTGTG");
+is ($seq->translate(), "FSV");
