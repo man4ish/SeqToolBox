@@ -148,7 +148,7 @@ sub extract_seq {
 	foreach my $c ( sort keys %{$data} ) {
 		my $seq = $seqdb->get_seq_by_id($c);
 		unless ($seq) {
-			warn "Could not extract sequence $seq";
+			warn "Could not extract sequence $c";
 			next;
 		}
 		foreach my $t ( keys %{ $data->{$c} } ) {

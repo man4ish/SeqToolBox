@@ -105,8 +105,9 @@ my $unzip_program = get_unzip_program( $opts{'forward'} );
 check_programs( 'rsem-calculate-expression', 'STAR' );
 my $dir = tempdir( $opts{'tag'} . '.XXXXX', DIR => $current_dir );
 chdir($dir) || die "Can't chdir to $dir\n";
+warn "Current dir: ", cwd(), "\n";
 system("mkfifo Aligned.toTranscriptome.out.bam") == 0 || die "Could not create mkfifo\n";
-my $star = Proc::Background->new("STAR --genomeDir $opts{sref} --readFilesIn ../$opts{forward} ../$opts{reverse} \\
+my $star_command = "STAR --genomeDir $opts{sref} --readFilesIn $opts{forward} $opts{reverse} \\
 --outFilterType BySJout \\
 --outFilterMultimapNmax 20  \\
 --outFilterMismatchNmax 999 \\
@@ -117,13 +118,18 @@ my $star = Proc::Background->new("STAR --genomeDir $opts{sref} --readFilesIn ../
 --alignSJDBoverhangMin 1 \\
 --quantMode TranscriptomeSAM \\
 --runThreadN $opts{processor} \\
---readFilesCommand $unzip_program");
+--readFilesCommand $unzip_program";
+print STDERR $star_command, "\n";
+my $star = Proc::Background->new($star_command);
+
+
 sleep(10);
+warn "Current dir before rsem: ", cwd(), "\n";
 system("rsem-calculate-expression --no-bam-output --paired-end -p $opts{processor} \\
 --bam Aligned.toTranscriptome.out.bam \\
 $opts{rref} \\
 $opts{tag}") == 0 or die "Can't run RSEM\n";
-
+warn "Current dir after RSEM: ", cwd(), "\n";
 system ('mv *.results ..') == 0 || die "Could not copy rsem restult\n";
 chdir($current_dir);
 system ("rm -rf $dir") == 0 || die "Could not remove the temporary dir\n";
@@ -165,6 +171,7 @@ sub _check_params {
 			   && $opts->{'sref'}
 			   && $opts->{'rref'} );
 	$opts->{'processor'} || ( $opts->{'processor'} = 8 );
+	die "TAG canno't be a directory name" if ( exists $opts->{'tag'} && $opts->{'tag'} =~ /\//);
 	$opts->{'tag'}       || ( $opts->{'tag'}       = 'tmp' );
 
 }
