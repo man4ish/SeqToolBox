@@ -15,6 +15,7 @@ use Getopt::Std;
 use strict;
 
 our (%opt);
+
 getopt( 'iobdesp', \%opt );
 
 #print $opt{i}, ',', $opt{o}, "\n";
@@ -57,8 +58,8 @@ if ( $engine eq "SGE" ) {
     }
 }
 elsif ( $engine eq "LSF" ) {
-    $LSF         = 'bsub';
-    $LSF_OPTIONS = '-q "unified" -R "linux" -P 0380';
+	$LSF         = 'bsub';
+	$LSF_OPTIONS = '-q "unified" -R "linux" -P 0380';
 }
 else {
 
