@@ -15,6 +15,7 @@ while (my $seq = $seqdb->next_seq) {
 	#print $def,"\n";
 	
 	my $cleaned_seq = $seq->get_cleaned_seq();
+	next unless ($cleaned_seq);
 	my $newseq;
 	if ($def) {
 		#print "defined\n";
@@ -22,6 +23,6 @@ while (my $seq = $seqdb->next_seq) {
 	}else{
 		$newseq = SeqToolBox::Seq->new(-id=>$id, -seq=>$cleaned_seq);
 	}
-	print $newseq->get_fasta(),"\n";
+	print $newseq->get_fasta();
 	#die "";
 }

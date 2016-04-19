@@ -335,10 +335,10 @@ sub get_pretty_seq {
 			$s .= $s[ $i - 1 ];
 		} else {
 			$s .= $s[ $i - 1 ];
-			$s .= " \n ";
+			$s .= "\n";
 		}
 	}
-	$s .= " \n ";
+	$s .= "\n";
 	return $s;
 }
 
@@ -354,7 +354,7 @@ Describe your function here
 
 sub get_fasta {
 	my ( $self, @args ) = @_;
-	my $s = " > " . $self->get_id() . " " . $self->get_desc() . " \n ";
+	my $s = ">" . $self->get_id() . " " . $self->get_desc() . "\n";
 	$s .= $self->get_pretty_seq();
 	return $s;
 }

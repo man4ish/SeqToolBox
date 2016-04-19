@@ -27,7 +27,7 @@ my $composite_output = $opt{o} || undef;
 my $database     = $opt{d} || die "Database is required option\n";
 my $blastoptions = $opt{b} || "";
 my $engine       = $opt{e} || "SGE";
-my $split        = $opt{s} || 1;
+my $split        = $opt{s} || 100;
 my $project_code = $opt{p} || "";
 
 #if ( $opt{e} eq "LSF" || $opt{e} eq "lsf" ) {
@@ -80,9 +80,9 @@ my $NP = 150;
 #my $CURRENT_DIR = cwd();
 
 my $CURRENT_DIR = $ENV{PWD};
-my $OUTPUT_DIR  = $CURRENT_DIR . '/output';
-my $LOG_DIR     = $CURRENT_DIR . '/log';
-my $TEMP_DIR    = $CURRENT_DIR . '/tmp';
+my $OUTPUT_DIR  = $CURRENT_DIR . '/output~';
+my $LOG_DIR     = $CURRENT_DIR . '/log~';
+my $TEMP_DIR    = $CURRENT_DIR . '/tmp~';
 
 if ( !stat($OUTPUT_DIR) ) {
     system("mkdir $OUTPUT_DIR") == 0 or die "Can't create output dir!\n";
@@ -240,7 +240,7 @@ my $missing_count     = 0;
 if ($composite_output) {
 	print STDERR "Collating output ...";
 	opendir( DIR, $OUTPUT_DIR ) or die "Can't open $OUTPUT_DIR\n";
-	open( OUTFILE, "|pbzip2 -c -9 >$opt{o}" ) || die "Can't open $opt{o}\n";
+	open( OUTFILE, "| lbzip2 -c -9 >$opt{o}" ) || die "Can't open $opt{o}\n";
 	while ( defined( $filename = readdir(DIR) ) ) {
 
 		my $infile = $OUTPUT_DIR . '/' . $filename;
@@ -684,7 +684,7 @@ sub open_file {
 sub check_exists {
     my $command = shift;
 
-    if ( system("which $command") == 0 ) {
+    if ( system("which $command 2>/dev/null") == 0 ) {
         return 1;
     }
     else {
