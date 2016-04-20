@@ -28,7 +28,7 @@ my $database     = $opt{d} || die "Database is required option\n";
 my $blastoptions = $opt{b} || "";
 my $engine       = $opt{e} || "SGE";
 my $split        = $opt{s} || 1;
-my $NP           = $opt{p} || 1000;
+my $NP           = $opt{p} || 100;
 
 #if ( $opt{e} eq "LSF" || $opt{e} eq "lsf" ) {
 #	$engine = "LSF";
@@ -225,7 +225,7 @@ if ($composite_input) {
 if ($composite_output) {
 	print STDERR "Collating output ...";
 	opendir( DIR, $OUTPUT_DIR ) or die "Can't open $OUTPUT_DIR\n";
-	open( OUTFILE, ">$opt{o}" ) || die "Can't open $opt{o}\n";
+	open( OUTFILE, "| xz -T0 -c >$opt{o}" ) || die "Can't open $opt{o}\n";
 	while ( defined( $filename = readdir(DIR) ) ) {
 
 		my $infile = $OUTPUT_DIR . '/' . $filename;
@@ -233,7 +233,7 @@ if ($composite_output) {
 
 		#		print STDERR $infile, "\n";
 		$total_returned_job++;
-		open( INFILE, "$infile" ) || die "Can't open $infile\n";
+		open( INFILE, "xzcat $infile |" ) || die "Can't open $infile\n";
 		while ( my $line = <INFILE> ) {
 			if ( $line =~ /^Query\=/ ) {
 				$total_result++;
@@ -286,7 +286,7 @@ sub gotosleep {
 				next;
 			}
 			my @fields = split( /\s+/, $line );
-			print STDERR join("-", @fields), "\n";
+			#print STDERR join("-", @fields), "\n";
 			if ( $engine eq "LSF" ) {
 				$status{ $fields[0] } = $fields[2];
 				if ( $fields[5] =~ /(\S+)\.nc/ ) {
@@ -393,7 +393,7 @@ sub launch_job {
 	my $filename = shift;
 	my $basename = get_base_name($filename);
 	my $logfile  = $LOG_DIR . '/' . $basename . '.log';
-	my $outfile  = $OUTPUT_DIR . '/' . $basename . '.bla';
+	my $outfile  = $OUTPUT_DIR . '/' . $basename . '.bla.xz';
 	my $infile   = $TEMP_DIR . '/' . $filename;
 	print STDERR "Scheduling jobs for $filename...";
 
@@ -406,7 +406,7 @@ sub launch_job {
 
 	}
 	open( LSF,
-		 "$LSF $lsf_options -o $logfile $BLAST $OPTIONS -i $infile -o $outfile|"
+		 "$LSF $lsf_options -o $logfile \"$BLAST $OPTIONS -i $infile | xz --fast -c >$outfile\" |"
 	);
 	$total_job++;
 	while ( my $line = <LSF> ) {
