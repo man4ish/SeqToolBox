@@ -394,6 +394,7 @@ sub launch_job {
 	my $basename = get_base_name($filename);
 	my $logfile  = $LOG_DIR . '/' . $basename . '.log';
 	my $outfile  = $OUTPUT_DIR . '/' . $basename . '.bla.xz';
+	my $tmpfile = $OUTPUT_DIR .'/'. $basename . '.tmp';
 	my $infile   = $TEMP_DIR . '/' . $filename;
 	print STDERR "Scheduling jobs for $filename...";
 
@@ -406,7 +407,7 @@ sub launch_job {
 
 	}
 	open( LSF,
-		 "$LSF $lsf_options -o $logfile \"$BLAST $OPTIONS -i $infile | xz --fast -c >$outfile\" |"
+		 "$LSF $lsf_options -o $logfile \"$BLAST $OPTIONS -i $infile | xz --fast -c >$tmpfile && mv $tmpfile $outfile\" |"
 	);
 	$total_job++;
 	while ( my $line = <LSF> ) {
