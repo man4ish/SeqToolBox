@@ -601,7 +601,7 @@ sub open_file {
 sub check_exists {
     my $command = shift;
 
-    if ( system("which $command") == 0 ) {
+    if ( system("which $command >/dev/null") == 0 ) {
         return 1;
     }
     else {

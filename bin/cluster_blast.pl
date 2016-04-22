@@ -51,7 +51,7 @@ my $LSF;
 my $LSF_OPTIONS = "";
 if ( $engine eq "SGE" ) {
 	$LSF         = "qsub";
-	$LSF_OPTIONS = "-b y -j y -V -cwd ";
+	$LSF_OPTIONS = "-b y -j y -V -cwd -q genifx.q";
 } elsif ( $engine eq "LSF" ) {
 	$LSF         = 'bsub';
 	$LSF_OPTIONS = '-q "unified" -R "linux"';
