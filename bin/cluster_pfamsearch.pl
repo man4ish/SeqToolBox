@@ -71,7 +71,7 @@ my @excluded_machines;
 
 # Number of jobs that the script will submit at a time
 
-my $NP = 150;
+my $NP = 250;
 
 #if ($ARGV[0]) {
 ##    $NP = $ARGV[0];
