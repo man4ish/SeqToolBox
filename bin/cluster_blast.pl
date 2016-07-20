@@ -175,7 +175,7 @@ my %pid_2_filename;
 if ($composite_input) {
 	$ext = '.lsf';
 } else {
-	$ext = '.fas';
+	$ext = '.lsf';
 }
 
 while ( defined( $filename = readdir(DIR) ) ) {
@@ -396,6 +396,10 @@ sub launch_job {
 	my $outfile  = $OUTPUT_DIR . '/' . $basename . '.bla.xz';
 	my $tmpfile = $OUTPUT_DIR .'/'. $basename . '.tmp';
 	my $infile   = $TEMP_DIR . '/' . $filename;
+	if (-s $outfile) {
+		print STDERR "Outfile $outfile exists.. skipping\n";
+		return 0;
+	}
 	print STDERR "Scheduling jobs for $filename...";
 
 	my $lsf_options = $LSF_OPTIONS;
