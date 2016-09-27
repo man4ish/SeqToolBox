@@ -88,12 +88,11 @@ close($fh);
 $archive->extract_file( "names.dmp",
 						File::Spec->catfile( $taxdb, "names.dmp" ) );
 
-$fh = IO::File->new(File::Spec->catfile($taxdb,"names.dmp"));
-create_db ($fh, "names.dmp",
-			["tax_id","name","unique_name","name_class"],
-			[0,1,2,3],
-			["tax_id"]
-);
+$fh = IO::File->new( File::Spec->catfile( $taxdb, "names.dmp" ) );
+create_db( $fh, "names.dmp",
+		   [ "tax_id", "name", "unique_name", "name_class" ],
+		   [ 0,        1,      2,             3 ],
+		   ["tax_id"] );
 
 #create_db( "", "names.dmp",
 #		   [ "tax_id", "name", "unique_name", "name_class" ],
@@ -210,7 +209,7 @@ sub create_db {
 	if ($fh) {
 		my $num = scalar( @{$field_names} );
 		$sql =
-		    'insert into ' 
+		    'insert into '
 		  . $base . '('
 		  . join( ",", @{$field_names} )
 		  . ') values('
@@ -241,7 +240,7 @@ ENDINPUT`;
 		my $dbh = DBI->connect( "dbi:SQLite:dbname=$dbname", "", "",
 								{ RaiseError => 1, AutoCommit => 0 } );
 		$sql =
-		    'create index index1 on ' 
+		    'create index index1 on '
 		  . $base . '('
 		  . join( ",", @{$indexes} ) . ')';
 		print STDERR "$sql\n";
