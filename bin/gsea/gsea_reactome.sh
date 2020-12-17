@@ -102,13 +102,15 @@ echo "GASE analysis start" > $OUT_DIR/$PREFIX.log
 date >> $OUT_DIR/$PREFIX.log
 
 
-java  -Xmx$MAX_MEM  -cp $GSEA xtools.gsea.GseaPreranked \
-      -gmx $MSigDB -collapse false -mode Max_probe -norm meandiv -nperm 1000 \
-      -rnk $RNK -scoring_scheme weighted -rpt_label $PREFIX \
-      -include_only_symbols true -make_sets true -plot_top_x 20 \
-      -rnd_seed timestamp -set_max 500 -set_min 15 -zip_report false \
-      -out $OUT_DIR -gui false
+# java  -Xmx$MAX_MEM  -cp $GSEA xtools.gsea.GseaPreranked \
+#       -gmx $MSigDB -collapse false -mode Max_probe -norm meandiv -nperm 1000 \
+#       -rnk $RNK -scoring_scheme weighted -rpt_label $PREFIX \
+#       -include_only_symbols true -make_sets true -plot_top_x 20 \
+#       -rnd_seed timestamp -set_max 500 -set_min 15 -zip_report false \
+#       -out $OUT_DIR -gui false
 
+
+$GSEA GSEAPreranked -gmx $MSigDB -collapse No_Collapse -mode Max_probe -norm meandiv -nperm 1000 -rnk $RNK -scoring_scheme weighted -rpt_label $PREFIX -create_svgs false -include_only_symbols true -make_sets true -plot_top_x 20 -rnd_seed timestamp -set_max 500 -set_min 15 -zip_report false -out $OUT_DIR
 
 echo "GASE analysis start" >> $OUT_DIR/$PREFIX.log
 date >> $OUT_DIR/$PREFIX.log
@@ -116,12 +118,13 @@ date >> $OUT_DIR/$PREFIX.log
 echo "Generate enrichment term table start" >> $OUT_DIR/$PREFIX.log
 date >> $OUT_DIR/$PREFIX.log
 
-for i in `ls $OUT_DIR/$PREFIX*/gsea_report_for*.xls`;
+#for i in `ls $OUT_DIR/$PREFIX*/gsea_report_for*.xls`;
+for i in `ls $OUT_DIR/$PREFIX*/gsea_report_for*.tsv`;
 do
-  tail -n +2 $i | cut -f 1,4,5,6 >> $OUT_DIR/$PREFIX.tsv.tmp
+  tail -n +2 $i | cut -f 1,4,5,6,7,8 >> $OUT_DIR/$PREFIX.tsv.tmp
 done
 
-echo -e "NAME\tSIZE\tES\tNES" > $OUT_DIR/$PREFIX.tsv
+echo -e "NAME\tSIZE\tES\tNES\tp_val\tq_val" > $OUT_DIR/$PREFIX.tsv
 cat $OUT_DIR/$PREFIX.tsv.tmp | sort -nrk 4 >> $OUT_DIR/$PREFIX.tsv
 
 rm -rf $OUT_DIR/$PREFIX.tsv.tmp
