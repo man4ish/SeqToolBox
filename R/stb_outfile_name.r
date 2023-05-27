@@ -1,6 +1,8 @@
-stb_outfile_name <- function (filename) {
+stb_outfile_name <- function (filename, dir = "./out") {
+
   if (is.null(VERSION)) {
       VERSION <<- format(Sys.Date(), format="%Y%m%d")
   }
-  return (paste0("./out/", paste(VERSION,filename, sep = "-")))
+  dir <- gsub ("/$", "", dir, perl = TRUE)
+  return (paste0(dir,"/", paste(VERSION,filename, sep = "-")))
 }
