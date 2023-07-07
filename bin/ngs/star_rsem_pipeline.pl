@@ -74,7 +74,7 @@ use strict;
 use warnings;
 use Getopt::Long;
 use File::Temp qw(tempdir);
-use Cwd;
+use Cwd qw(abs_path cwd);
 use Carp;
 use Pod::Usage;
 use Proc::Background;
@@ -98,14 +98,20 @@ GetOptions( \%opts, 'help|?', 'forward|f=s', 'reverse|r=s', 'sref=s', 'rref=s',
   || pod2usage( -verbose => 0 );
 
 my @fasta_files = @ARGV;
+
 _check_params( \%opts );
 
 my $current_dir   = cwd();
 my $unzip_program = get_unzip_program( $opts{'forward'} );
 check_programs( 'rsem-calculate-expression', 'STAR' );
+
 my $dir = tempdir( $opts{'tag'} . '.XXXXX', DIR => $current_dir );
 chdir($dir) || die "Can't chdir to $dir\n";
 warn "Current dir: ", cwd(), "\n";
+
+
+
+
 system("mkfifo Aligned.toTranscriptome.out.bam") == 0 || die "Could not create mkfifo\n";
 my $star_command = "STAR --genomeDir $opts{sref} --readFilesIn $opts{forward} $opts{reverse} \\
 --outFilterType BySJout \\
@@ -170,8 +176,17 @@ sub _check_params {
 			   && $opts->{'reverse'}
 			   && $opts->{'sref'}
 			   && $opts->{'rref'} );
+	
+	$opts->{'forward'} = _convert_to_abs_path($opts->{'forward'});
+	$opts->{'reverse'} = _convert_to_abs_path($opts->{'reverse'});
+
 	$opts->{'processor'} || ( $opts->{'processor'} = 8 );
 	die "TAG canno't be a directory name" if ( exists $opts->{'tag'} && $opts->{'tag'} =~ /\//);
 	$opts->{'tag'}       || ( $opts->{'tag'}       = 'tmp' );
 
+}
+
+sub _convert_to_abs_path {
+	my $cur = shift;
+	return abs_path($cur);
 }
